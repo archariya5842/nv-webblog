@@ -5,7 +5,16 @@ const {sequelize} = require('./models')
 const config = require('./config/config')
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
+
 require('./routes')(app)
+
+let port = process.env.PORT || config.port
+sequelize.sync({force: false}).then(() => {
+ app.listen(port, function () {
+ console.log('Server running on ' + port)
+ })
+})
+
 app.get('/status', function(req,res){
     res.send('Hello nodejs server')
 })
@@ -27,17 +36,11 @@ app.post('/user/', function (req, res) {
    })
 // edit user
 app.put('/user/:userId', function (req, res) {
-    res.send('ทาํการแกไ้ขผใุ้ชง้าน: ' + req.params.userId + ' : ' +
+    res.send('ทาํการแก้ไขผู้ใช้งาน: ' + req.params.userId + ' : ' +
    JSON.stringify(req.body))
    })
 // delete user
 app.delete('/user/:userId', function (req, res) {
     res.send('ทําการลบผุ้ใช้งาน: ' + req.params.userId + ' : ' +
     JSON.stringify(req.body))
-})
-let port = process.env.PORT || config.port
-sequelize.sync({force: false}).then(() => {
- app.listen(port, function () {
- console.log('Server running on ' + port)
- })
 })
